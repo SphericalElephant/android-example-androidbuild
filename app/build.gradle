@@ -1,0 +1,60 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
+    defaultConfig {
+        applicationId "com.sphericalelephant.example.androidbuild"
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+
+    lintOptions {
+        abortOnError true
+        ignoreWarnings false
+    }
+
+    signingConfigs {
+        myflavour {
+            storeFile file("release.keystore")
+            storePassword System.getenv("KSTOREPWD")
+            keyAlias "androidbuild-myflavour"
+            keyPassword System.getenv("KEYPWD")
+        }
+        myotherflavour {
+            storeFile file("release.keystore")
+            storePassword System.getenv("KSTOREPWD")
+            keyAlias "androidbuild-myotherflavour"
+            keyPassword System.getenv("KEYPWD")
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    productFlavors {
+        myflavour {
+            signingConfig signingConfigs.myflavour
+            applicationId "com.sphericalelephant.example.androidbuild.myflavour"
+            versionName "1.0-myflavour"
+        }
+        myotherflavour {
+            signingConfig signingConfigs.myotherflavour
+            applicationId "com.sphericalelephant.example.androidbuild.myotherflavour"
+            versionName "1.0-myotherflavour"
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
+}
