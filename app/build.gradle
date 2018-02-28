@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.sphericalelephant.example.androidbuild"
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
     }
@@ -16,15 +16,18 @@ android {
         ignoreWarnings false
     }
 
+    // taken from: https://developer.android.com/studio/build/build-variants.html
+    flavorDimensions "api", "mode"
+
     signingConfigs {
         myflavour {
-            storeFile file("release.keystore")
+            storeFile file("release.jks")
             storePassword System.getenv("KSTOREPWD")
             keyAlias "androidbuild-myflavour"
             keyPassword System.getenv("KEYPWD")
         }
         myotherflavour {
-            storeFile file("release.keystore")
+            storeFile file("release.jks")
             storePassword System.getenv("KSTOREPWD")
             keyAlias "androidbuild-myotherflavour"
             keyPassword System.getenv("KEYPWD")
@@ -40,21 +43,37 @@ android {
 
     productFlavors {
         myflavour {
+            dimension "mode"
             signingConfig signingConfigs.myflavour
             applicationId "com.sphericalelephant.example.androidbuild.myflavour"
             versionName "1.0-myflavour"
         }
         myotherflavour {
+            dimension "mode"
             signingConfig signingConfigs.myotherflavour
             applicationId "com.sphericalelephant.example.androidbuild.myotherflavour"
             versionName "1.0-myotherflavour"
+        }
+        // taken from: https://developer.android.com/studio/build/build-variants.html
+        // override settings in flavours
+        minApi24 {
+            dimension "api"
+            minSdkVersion 24
+            versionCode 30000 + android.defaultConfig.versionCode
+            versionNameSuffix "-minApi24"
+        }
+        minApi23 {
+            dimension "api"
+            minSdkVersion 23
+            versionCode 20000  + android.defaultConfig.versionCode
+            versionNameSuffix "-minApi23"
         }
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:design:23.1.1'
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    testApi 'junit:junit:4.12'
+    api 'com.android.support:appcompat-v7:27.1.0'
+    api 'com.android.support:design:27.1.0'
 }
